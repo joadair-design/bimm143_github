@@ -1,0 +1,58 @@
+---
+title: "Class 6: Homework"
+author: Jolie Adair (PID A17737497)
+format: pdf
+---
+
+Write a function from the supplied code
+
+```{r}
+#  Can you improve this analysis code? 
+library(bio3d) 
+s1 <- read.pdb("4AKE")  # kinase with drug 
+s2 <- read.pdb("1AKE")  # kinase no drug 
+s3 <- read.pdb("1E4Y")  # kinase with drug
+
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA") 
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA") 
+s3.chainA <- trim.pdb(s1, chain="A", elety="CA") 
+
+s1.b <- s1.chainA$atom$b 
+s2.b <- s2.chainA$atom$b 
+s3.b <- s3.chainA$atom$b 
+
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor") 
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor") 
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor") 
+```
+
+
+
+```{r}
+library(bio3d) #- Installed bio3d
+read.protein.db <- function(pdb_ids) { # Here we assigned a function to a vector
+  for (pdb_id in pdb_ids) {   # Assigned our function to be plural 
+    
+    pdb <-  read.pdb(pdb_id) # - Assigning an object to equal what the function 
+#`read.pdb`does to our original argument
+    chainA_pdb <- trim.pdb(pdb, chain="A", elety="CA") # Same thing here, 
+# assigning an object to a function that affects our original argument
+    bfactor <- chainA_pdb$atom$b  # - Same thing here, assigning an object 
+#to a function that affects our original argument
+    
+    
+    plotb3(bfactor, sse=chainA_pdb, typ="l", ylab="Bfactor", main=pdb_id) 
+#Assigning an object to a specific column and row in our database, 
+#then plotting it,  running main `main=pdb_id` to run all of our
+#objects not just one.
+  }
+ 
+}
+
+read.protein.db(c("4AKE", "1AKE", "1E4Y")) # - Printing our function.
+
+```
+
+
+
+
