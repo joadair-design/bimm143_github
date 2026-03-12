@@ -1,0 +1,240 @@
+---
+title: "Class 14: RNA-Seq analysis mini-project"
+author: "Jolie Adair (PID A17337497)"
+format: pdf
+toc: TRUE
+---
+
+## Background 
+
+
+## Data Import
+
+We have 2 ket input files: counts and metadata
+
+```{r}
+countData <- read.csv("GSE37704_featurecounts.csv", row.names=1)
+head(countData)
+```
+
+```{r}
+colData <- read.csv("GSE37704_metadata.csv", row.names=1)
+head(colData)
+```
+ We need to remove the first length" column from `countData` to have a 1:! 
+corespondance with `colData` rows.
+
+
+
+```{r}
+rownames(colData) == colnames(countData)
+```
+
+
+## Check and Tidy
+> Q. Complete the code below to remove the troublesome first column from countData
+
+```{r}
+countData <- as.matrix(countData[, -1])
+head(countData)
+```
+
+> Q2. Complete the code below to filter countData to exclude genes (i.e. rows) where we have 0 read count across all samples (i.e. columns).
+
+```{r}
+countData = countData[rowSums(countData) > 0,]
+head(countData)
+```
+
+
+## Remove zero counts genes
+
+Some genes (rows) have no count data (i.e. zero values). We should remove these before any further analysis.
+
+```{r}
+to.keep <- rowSums(countData) > 0
+countData <- countData[to.keep, ]
+```
+
+
+
+## Run DESeq
+
+```{r}
+library(DESeq2)
+```
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = countData, 
+                       colData = colData, 
+                       design = ~condition)
+```
+
+
+```{r}
+dds= DESeq(dds)
+
+```
+
+## Results
+
+```{r}
+res <- results(dds)
+res
+```
+
+## Get Results
+
+> Q. Call the summary() function on your results to get a sense of how many genes are up or down-regulated at the default 0.1 p-value cutoff.
+
+```{r}
+summary(res)
+```
+
+
+## Volcano plot
+
+```{r}
+library(ggplot2)
+
+ggplot(res) +
+  aes(log2FoldChange, 
+      -log10(padj)) +
+  geom_point()
+  
+```
+> Q. Improve this plot by completing the below code, which adds color, axis labels and cutoff lines:
+
+Let's add some color to this plot along with cutoff lines for fold-change and P-value
+
+```{r}
+mycols <-  rep ("gray", nrow(res))
+mycols[abs(res$log2FoldChange) > 2] <- "blue"
+mycols[res$padj > 0.01] <- "gray"
+
+ggplot(res) +
+  aes(x = log2FoldChange,
+      y = -log10(padj)) +
+  geom_point(color = mycols) +
+  xlab("Log2(FoldChange)") +
+  ylab("-Log(P-value)") +
+  geom_vline(xintercept = c(-2,2)) +
+  geom_hline(yintercept = -log10(0.01))
+```
+
+
+
+## Add Annotation
+
+> Q. Use the mapIDs() function multiple times to add SYMBOL, ENTREZID and GENENAME annotation to our results by completing the code below.
+
+
+## MapIds
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+columns(org.Hs.eg.db)
+```
+
+
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="SYMBOL",
+                    multiVals="first")
+
+res$entrez <-  mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID",
+                    multiVals="first")
+```
+
+```{r}
+res$genename <- mapIds(org.Hs.eg.db,
+                       keys = row.names(res),
+                       keytype = "ENSEMBL",
+                       column = "GENENAME",
+                       multiVals = "first")
+```
+```{r}
+res <- as.data.frame(res)
+```
+
+
+> Q. Finally for this section let's reorder these results by adjusted p-value and save them to a CSV file in your current project director
+
+```{r}
+res = res[order(res$padj),]
+write.csv(res, file="deseq_results.csv")
+```
+
+## Pathway Analysis
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+
+```
+
+```{r}
+foldchanges <- res$log2FoldChange
+names(foldchanges) <- res$entrez
+# Remove NA Entrez IDs
+foldchanges <- foldchanges[!is.na(names(foldchanges))]
+```
+
+```{r}
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+```
+
+
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+```
+
+```{r}
+# Look at the first few down (less) pathways
+head(keggres$less)
+```
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+```
+
+![](hsa04110.pathview.png)
+
+## Go Analysis
+
+Focus on the Biological Process "BP" 
+
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+```
+
+
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+gobpsets = go.sets.hs[go.subs.hs$BP]
+```
+
+```{r}
+gobpres = gage(foldchanges, gsets=gobpsets)
+```
+
+```{r}
+head(gobpres$greater)
+head(gobpres$less)
+```
+## OPTIONAL Identify top significant genes
+
+```{r}
+res_sig <- res[which(res$padj < 0.01 & abs(res$log2FoldChange) > 2), ]
+head(res_sig, 10)
+```
+
