@@ -4,7 +4,7 @@ My classwork for [BIMM143](https://bioboot.github.io/bimm143_W26/schedule/#15) a
 ## Index of Material
 *Introductory material*
 
-- Class 05 [Data viz with ggplot](class05/Class05.md)
+- Class 05 [Data viz with ggplot](class05/class05.md)
 - Class 06 [R Functions](Class06/class06.md)
 - Class 07 [Machine Learning](Class07/Class07.qmd)
 - Class 08 [Cancer Mini Project](class08/Class08.qmd)
