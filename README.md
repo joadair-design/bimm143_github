@@ -17,7 +17,7 @@ My classwork for [BIMM143](https://bioboot.github.io/bimm143_W26/schedule/#15) a
 - Class 16 [Intro to Unix](Class16/class16.qmd)
 - Class 17 [Analyzing sequencing data in the cloud](Class17/Class17.qmd)
 - Class 18 [Pertussis](Class18/Class18.qmd)
-- Class 19 [Cancer Mutation Mini Project](class19/Class19.qmd)
+- Class 19 [Cancer Mutation Mini Project](classs19/Lab19.pdf)
 
 
 
