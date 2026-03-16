@@ -9,7 +9,7 @@ My classwork for [BIMM143](https://bioboot.github.io/bimm143_W26/schedule/#15) a
 - Class 07 [Machine Learning](Class07/Class07.md)
 - Class 08 [Cancer Mini Project](class08/Class08.md)
 - Class 09 [Candy Mini Project](Class09/Class09.qmd)
-- Class 10 [Structural Bioinformatics](Class10/Class10.qmd)
+- Class 10 [Structural Bioinformatics](Class10/Class10.html)
 - Class 11 [AlphaFold](Class11/Class11.md)
 - Class 12 [Introduction to Genome Informatics Lab](Class12/Class12.md)
 - Class 13 [Candy Mini Project](class13/Class13.md)
