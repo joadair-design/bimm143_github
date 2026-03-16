@@ -1,7 +1,7 @@
 ---
 title: "Class 10: Structural Bioinformatics 1"
 author: Jolie Adair (PID A17337497)
-format: pdf
+format: gfm
 ---
 
 
@@ -212,9 +212,6 @@ pca1 <- mktrj(pc.xray, file="pca.pdb")
 ```
 
 
-What is the total numbers of entries in the PDB 
-```{r}
 
-```
 
 
